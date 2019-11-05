@@ -37,7 +37,7 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
-- stage: deploy-dev
+- stage: deploy_dev
   jobs:
   - deployment: 'DeployToDev'
     pool:
@@ -55,7 +55,7 @@ stages:
               WebAppName: 'SVCICDDemoApp'
               packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/app.jar'
               RuntimeStack: 'JAVA|8-jre8'
-- stage: deploy-stage
+- stage: deploy_stage
   jobs:
   - deployment: 'DeployToDev'
     pool:
