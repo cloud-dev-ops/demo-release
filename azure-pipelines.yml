@@ -6,79 +6,32 @@
 trigger:
 - master
 
-stages:
-- stage: build
-  jobs:
-  - job: 'BuildAndPush'
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
-        checkStyleRunAnalysis: true
+pool:
+  vmImage: 'ubuntu-latest'
 
-    - task: CopyFiles@2
-      inputs:
-        Contents: 'target/*.jar'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        flattenFolders: true
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)'
-        artifact: 'drop'
-        publishLocation: 'pipeline'
+steps:
 
-- stage: deploy_dev
-  jobs:
-  - deployment: 'DeployToDev'
-    pool:
-      vmImage: 'ubuntu-latest'
-    environment: Devlopment
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              buildType: 'current'
-              itemPattern: '**/*.jar'
-              targetPath: '$(System.ArtifactsDirectory)'
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Stage App Service'
-            inputs:
-              azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
-              appType: 'webAppLinux'
-              WebAppName: 'SVCICDDemoApp'
-              packageForLinux: '$(System.ArtifactsDirectory)/drop/app.jar'
-              RuntimeStack: 'JAVA|8-jre8'
-- stage: deploy_stage
-  jobs:
-  - deployment: 'DeployToStage'
-    pool:
-      vmImage: 'ubuntu-latest'
-    environment: Stage
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              buildType: 'current'
-              itemPattern: '**/*.jar'
-              targetPath: '$(System.ArtifactsDirectory)'
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Stage App Service'
-            inputs:
-              azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
-              appType: 'webAppLinux'
-              WebAppName: 'SVCICDDemoApp'
-              packageForLinux: '$(System.ArtifactsDirectory)/drop/app.jar'
-              RuntimeStack: 'JAVA|8-jre8'
+
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+    checkStyleRunAnalysis: true
+
+- task: CopyFiles@2
+  inputs:
+    Contents: 'target/*.jar'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
