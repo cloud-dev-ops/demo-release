@@ -50,7 +50,7 @@ stages:
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Stage App Service'
             inputs:
-              azureSubscription: '$(Parameters.ConnectedServiceName)'
+              azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
               appType: 'webAppLinux'
               WebAppName: 'SVCICDDemoApp'
               packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/app.jar'
@@ -68,9 +68,8 @@ stages:
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Stage App Service'
             inputs:
-              azureSubscription: '$(Parameters.ConnectedServiceName)'
+              azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
               appType: 'webAppLinux'
               WebAppName: 'SVCICDDemoApp'
               packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/app.jar'
               RuntimeStack: 'JAVA|8-jre8'
-
