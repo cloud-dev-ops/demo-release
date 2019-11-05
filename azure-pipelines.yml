@@ -47,17 +47,23 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              downloadType: 'specific'
+              itemPattern: '**/*.jar'
+              downloadPath: '$(System.ArtifactsDirectory)'
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Stage App Service'
             inputs:
               azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
               appType: 'webAppLinux'
               WebAppName: 'SVCICDDemoApp'
-              packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/app.jar'
+              packageForLinux: '$(System.ArtifactsDirectory)/app.jar'
               RuntimeStack: 'JAVA|8-jre8'
 - stage: deploy_stage
   jobs:
-  - deployment: 'DeployToDev'
+  - deployment: 'DeployToStage'
     pool:
       vmImage: 'ubuntu-latest'
     environment: Stage
