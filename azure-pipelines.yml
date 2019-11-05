@@ -57,7 +57,7 @@ stages:
               azureSubscription: 'Visual Studio Ultimate with MSDN (99ff5015-7d10-4566-9f01-c381fd157899)'
               appType: 'webAppLinux'
               WebAppName: 'SVCICDDemoApp'
-              packageForLinux: '$(System.ArtifactsDirectory)/app.jar'
+              packageForLinux: '$(System.ArtifactsDirectory)/drop/app.jar'
               RuntimeStack: 'JAVA|8-jre8'
 - stage: deploy_stage
   jobs:
